@@ -2,9 +2,9 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 import com.accountType.saving;
+import com.middleware.middletest;
 import com.accountType.current;
-
-public class portal{
+public class portal {
     public static void main(String[] args) {
         ArrayList<Object> accounts = new ArrayList<Object>();
         Scanner sc = new Scanner(System.in);
@@ -18,31 +18,62 @@ public class portal{
             System.out.println("4 to Exit");
             
             int choice = sc.nextInt();
+            sc.nextLine(); // consume leftover newline
             
             if(choice == 1){
                 System.out.println("Enter your username:");
-                String username = sc.next();
+                String username = sc.nextLine();
                 System.out.println("Enter your password:");
-                String password = sc.next();
+                String password = sc.nextLine();
                 
                 // Here you would add code to verify the username and password
-                System.out.println("Login successful!");
+                middletest mp = new middletest();
+                int ind = mp.login(username,password,accounts);
+                if(ind>=0){
+                    System.out.println("System Login");
+                    System.out.println("Want to withdraw? Press 1");
+                    System.out.println("Want to deposit? Press 2");
+                    System.out.println("Want to check balance? Press 3");
+                    Object findData = accounts.get(ind-1);
+                    saving sa = null;
+                    current ca = null;
+                    if(findData instanceof saving){
+                        sa = (saving) findData;
+                    }
+                    else{
+                        ca = (current) findData;
+                    }
+                    int ans = sc.nextInt();
+                    sc.nextLine();
+                    if(ans==1){
+                        int withdraw_amount = sc.nextInt();
+                        sa.balance -= withdraw_amount;
+                        System.out.println("new  balance "+ sa.balance);
+                    }
+                }
                 
-            } else if(choice == 2){
+            } 
+            else if(choice == 2){
+                System.out.println("Enter your Full name:");
+                String name = sc.nextLine();  // Use nextLine() to read full name with spaces
                 System.out.println("Enter your desired username:");
-                String newUsername = sc.next();
+                String newUsername = sc.nextLine();
                 System.out.println("Enter your desired password:");
-                String newPassword = sc.next();
+                String newPassword = sc.nextLine();
                 System.out.println("Choose account type: 1 for Saving, 2 for Current");
                 int accType = sc.nextInt();
+                sc.nextLine(); // consume leftover newline
                 
                 if(accType == 1){
-                    saving newAccount = new saving(newUsername, newPassword);
+                    saving newAccount = new saving(name,newUsername, newPassword);
+                    System.out.println("Enter initial deposit amount for Saving Account:");
+                    double depositAmount = sc.nextDouble();
+                    newAccount.deposit(depositAmount);
                     accounts.add(newAccount);
                     System.out.println("Saving Account Registration successful!");
                     System.out.println("Username: " + newAccount.username);
                 } else if(accType == 2){
-                    current newAccount = new current(newUsername, newPassword);
+                    current newAccount = new current(name,newUsername, newPassword);
                     accounts.add(newAccount);
                     System.out.println("Current Account Registration successful!");
                     System.out.println("Username: " + newAccount.username);
